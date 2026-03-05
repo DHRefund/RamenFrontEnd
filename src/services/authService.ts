@@ -13,21 +13,12 @@ export const authService = {
 
     if (data.token) {
       localStorage.setItem("admin_token", data.token);
-      // localStorage.setItem(
-      //   "admin_user",
-      //   JSON.stringify({
-      //     username: data.username,
-      //     fullName: data.fullName,
-      //     role: data.role,
-      //   }),
-      // );
     }
     return data;
   },
 
   logout: () => {
     localStorage.removeItem("admin_token");
-    localStorage.removeItem("admin_user");
   },
 
   getToken: (): string | null => {

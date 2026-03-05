@@ -14,7 +14,7 @@ export const TimeSlotSelector = ({ slots, selectedSlot, onSelectSlot, isLoading 
     return (
       <div className="text-center py-8">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-600 mx-auto" />
-        <p className="text-gray-500 mt-2">Đang tải khung giờ...</p>
+        <p className="text-gray-500 mt-2">時間枠を読み込み中...</p>
       </div>
     );
   }
@@ -22,18 +22,18 @@ export const TimeSlotSelector = ({ slots, selectedSlot, onSelectSlot, isLoading 
   if (slots.length === 0) {
     return (
       <div className="text-center py-8 bg-gray-50 rounded-lg">
-        <p className="text-gray-500">Không có khung giờ nào khả dụng</p>
+        <p className="text-gray-500">現在ご利用可能な時間枠はありません</p>
       </div>
     );
   }
 
-  // Nhóm slot theo buổi (Sáng/Chiều/Tối)
-  const morningSlots = slots.filter((s) => {
+  // 昼・夜で分類
+  const lunchSlots = slots.filter((s) => {
     const hour = parseInt(s.time.split(":")[0]);
     return hour >= 11 && hour < 14;
   });
 
-  const eveningSlots = slots.filter((s) => {
+  const dinnerSlots = slots.filter((s) => {
     const hour = parseInt(s.time.split(":")[0]);
     return hour >= 18 && hour < 22;
   });
@@ -58,9 +58,9 @@ export const TimeSlotSelector = ({ slots, selectedSlot, onSelectSlot, isLoading 
         <span className="text-lg font-semibold">{slot.time}</span>
         <span className="text-xs mt-1">
           {isAvailable ? (
-            <span className="text-green-600">Còn {remainingSeats} chỗ</span>
+            <span className="text-green-600">残り{remainingSeats}席</span>
           ) : (
-            <span className="text-red-600">Hết chỗ</span>
+            <span className="text-red-600">満席</span>
           )}
         </span>
       </Button>
@@ -70,23 +70,23 @@ export const TimeSlotSelector = ({ slots, selectedSlot, onSelectSlot, isLoading 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-2">⏰ Chọn Khung Giờ</h3>
-        <p className="text-sm text-gray-500">Chọn khung giờ phù hợp với bạn</p>
+        <h3 className="text-lg font-semibold mb-2">⏰ 時間を選択</h3>
+        <p className="text-sm text-gray-500">ご希望の時間帯をお選びください</p>
       </div>
 
-      {/* Buổi trưa */}
-      {morningSlots.length > 0 && (
+      {/* ランチ */}
+      {lunchSlots.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-gray-600 mb-3">🌞 Buổi Trưa (11:00 - 14:00)</h4>
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-3">{morningSlots.map(renderSlotButton)}</div>
+          <h4 className="text-sm font-medium text-gray-600 mb-3">🌞 ランチ（11:00 - 14:00）</h4>
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-3">{lunchSlots.map(renderSlotButton)}</div>
         </div>
       )}
 
-      {/* Buổi tối */}
-      {eveningSlots.length > 0 && (
+      {/* ディナー */}
+      {dinnerSlots.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-gray-600 mb-3">🌙 Buổi Tối (18:00 - 22:00)</h4>
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-3">{eveningSlots.map(renderSlotButton)}</div>
+          <h4 className="text-sm font-medium text-gray-600 mb-3">🌙 ディナー（18:00 - 22:00）</h4>
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-3">{dinnerSlots.map(renderSlotButton)}</div>
         </div>
       )}
     </div>

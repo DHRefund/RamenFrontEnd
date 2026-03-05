@@ -15,6 +15,8 @@ export const useAuth = () => {
 
   const checkTokenExpiration = useCallback(() => {
     const token = authService.getToken();
+
+    // トークンが存在しない場合は何もしない
     if (!token) return;
 
     try {
@@ -22,20 +24,21 @@ export const useAuth = () => {
       const now = Date.now() / 1000;
       const timeLeft = decoded.exp - now;
 
-      // Nếu còn ít hơn 5 phút, logout
+      // 有効期限が5分未満の場合はログアウトする
       if (timeLeft < 300) {
-        console.warn("⚠️ Token sắp hết hạn, đăng xuất...");
+        console.warn("⚠️ トークンの有効期限が近づいています。ログアウトします。");
         authService.logout();
         navigate("/admin/login");
       }
     } catch (error) {
-      console.error("Token không hợp lệ:", error);
+      // トークンが不正な場合はログアウトしてログイン画面へ遷移
+      console.error("トークンが不正です:", error);
       authService.logout();
       navigate("/admin/login");
     }
   }, [navigate]);
 
-  // Check token mỗi 1 phút
+  // 1分ごとにトークンの有効期限をチェックする
   useEffect(() => {
     checkTokenExpiration();
     const interval = setInterval(checkTokenExpiration, 60000);

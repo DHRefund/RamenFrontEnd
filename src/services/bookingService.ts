@@ -51,8 +51,4 @@ export const bookingService = {
     const { data } = await apiClient.post("/reservations/cancel", payload);
     return data;
   },
-  getBookingById: async (id: string): Promise<BookingDetailResponse> => {
-    const { data } = await apiClient.get(`/reservations/${id}`);
-    return data;
-  },
 };

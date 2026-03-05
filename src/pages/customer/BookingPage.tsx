@@ -12,11 +12,14 @@ import { useNavigate } from "react-router-dom";
 
 export const BookingPage = () => {
   const navigate = useNavigate();
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
-  const [step, setStep] = useState(1); // 1: Date, 2: Time, 3: Form
+  const [step, setStep] = useState(1); // 1: 日付選択, 2: 時間選択, 3: 情報入力
 
-  // Fetch slots when date changes
+  /**
+   * 日付が変更されたときに予約可能な時間枠を取得
+   */
   const { data: scheduleData, isLoading: isLoadingSlots } = useQuery({
     queryKey: ["schedule", selectedDate],
     queryFn: () => {
@@ -26,41 +29,64 @@ export const BookingPage = () => {
     enabled: !!selectedDate,
   });
 
-  // Create booking mutation
+  /**
+   * 予約作成API
+   */
   const createBookingMutation = useMutation({
     mutationFn: (data: BookingRequest) => bookingService.createBooking(data),
+
+    /**
+     * 予約成功時
+     */
     onSuccess: (response) => {
-      toast.success("🎉 Đặt bàn thành công!");
+      toast.success("🎉 予約が完了しました！");
       console.log("Booking created:", response);
       navigate(`/confirmation/${response.bookingId}`);
     },
+
+    /**
+     * エラー時
+     */
     onError: (error: any) => {
       if (error.response?.status === 400) {
-        toast.error("❌ Khung giờ đã hết chỗ. Vui lòng chọn giờ khác.");
+        toast.error("❌ この時間枠は満席です。別の時間を選択してください。");
       } else {
-        toast.error("❌ Có lỗi xảy ra. Vui lòng thử lại.");
+        toast.error("❌ エラーが発生しました。もう一度お試しください。");
       }
     },
   });
 
+  /**
+   * 日付選択処理
+   */
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
     setSelectedSlotId(null);
+
     if (date) setStep(2);
   };
 
+  /**
+   * 時間枠選択処理
+   */
   const handleSlotSelect = (slotId: string) => {
     setSelectedSlotId(slotId);
     setStep(3);
-    // Scroll to form
+
+    // フォーム位置までスクロール
     setTimeout(() => {
-      document.getElementById("booking-form")?.scrollIntoView({ behavior: "smooth" });
+      document.getElementById("booking-form")?.scrollIntoView({
+        behavior: "smooth",
+      });
     }, 100);
   };
 
+  /**
+   * フォーム送信処理
+   */
   const handleFormSubmit = (formData: any) => {
     if (!selectedDate || !selectedSlotId) {
-      toast.error("Vui lòng chọn ngày và giờ");
+      toast.error("日付と時間を選択してください");
       return;
     }
 
@@ -76,13 +102,15 @@ export const BookingPage = () => {
     createBookingMutation.mutate(bookingRequest);
   };
 
-  // Get selected slot info
+  /**
+   * 選択された時間枠の情報を取得
+   */
   const selectedSlot = scheduleData?.slots.find((s) => s.id === selectedSlotId);
   const selectedTime = selectedSlot?.time || "";
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Progress Steps */}
+      {/* ステップ表示 */}
       <div className="max-w-4xl mx-auto mb-8">
         <div className="flex items-center justify-center space-x-4">
           {[1, 2, 3].map((s) => (
@@ -96,20 +124,21 @@ export const BookingPage = () => {
             </div>
           ))}
         </div>
+
         <div className="flex justify-center space-x-16 mt-2 text-sm">
-          <span className={step >= 1 ? "text-red-600 font-medium" : "text-gray-500"}>Chọn Ngày</span>
-          <span className={step >= 2 ? "text-red-600 font-medium" : "text-gray-500"}>Chọn Giờ</span>
-          <span className={step >= 3 ? "text-red-600 font-medium" : "text-gray-500"}>Thông Tin</span>
+          <span className={step >= 1 ? "text-red-600 font-medium" : "text-gray-500"}>日付選択</span>
+          <span className={step >= 2 ? "text-red-600 font-medium" : "text-gray-500"}>時間選択</span>
+          <span className={step >= 3 ? "text-red-600 font-medium" : "text-gray-500"}>情報入力</span>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-        {/* Left Column - Booking Steps */}
+        {/* 左側：予約ステップ */}
         <div className="space-y-8">
-          {/* Step 1: Calendar */}
+          {/* Step 1: カレンダー */}
           <BookingCalendar selectedDate={selectedDate} onSelectDate={handleDateSelect} />
 
-          {/* Step 2: Time Slots */}
+          {/* Step 2: 時間枠 */}
           {selectedDate && (
             <TimeSlotSelector
               slots={scheduleData?.slots || []}
@@ -119,7 +148,7 @@ export const BookingPage = () => {
             />
           )}
 
-          {/* Step 3: Form */}
+          {/* Step 3: フォーム */}
           {selectedSlotId && (
             <div id="booking-form">
               <BookingForm onSubmit={handleFormSubmit} isSubmitting={createBookingMutation.isPending} />
@@ -127,7 +156,7 @@ export const BookingPage = () => {
           )}
         </div>
 
-        {/* Right Column - Summary (Sticky) */}
+        {/* 右側：予約内容サマリー */}
         <div className="hidden md:block">
           <div className="sticky top-24">
             <BookingSummary
@@ -138,13 +167,14 @@ export const BookingPage = () => {
               customerPhone={watchCustomerPhone() || ""}
             />
 
-            {/* Lưu ý */}
+            {/* 注意事項 */}
             <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <h4 className="font-semibold text-yellow-800 mb-2">⚠️ Lưu Ý</h4>
+              <h4 className="font-semibold text-yellow-800 mb-2">⚠️ 注意事項</h4>
+
               <ul className="text-sm text-yellow-700 space-y-1">
-                <li>• Bàn được giữ tối đa 15 phút sau giờ đặt</li>
-                <li>• Vui lòng gọi hủy trước 2 giờ nếu không đến</li>
-                <li>• Nhóm trên 8 người vui lòng gọi trực tiếp</li>
+                <li>• 予約時間から15分まで席を確保します</li>
+                <li>• 来店できない場合は2時間前までにキャンセルしてください</li>
+                <li>• 8名以上の団体は直接お電話ください</li>
               </ul>
             </div>
           </div>
@@ -154,13 +184,18 @@ export const BookingPage = () => {
   );
 };
 
-// Helper functions to watch form values (cần refactor để lấy từ form context)
+/**
+ * フォーム値取得用のダミー関数
+ * TODO: React Hook Form の Context から取得するようにリファクタリング予定
+ */
 function watchNumberOfGuests() {
   return "2";
 }
+
 function watchCustomerName() {
   return "";
 }
+
 function watchCustomerPhone() {
   return "";
 }

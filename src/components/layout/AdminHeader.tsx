@@ -19,30 +19,30 @@ export const AdminHeader = ({ onLogout, currentUser }: AdminHeaderProps) => {
   return (
     <header className="h-16 border-b bg-white flex items-center justify-between px-6 sticky top-0 z-40">
       <div>
-        <h1 className="text-lg font-semibold">Quản Lý Đặt Bàn</h1>
-        <p className="text-xs text-gray-500">{currentUser?.fullName || "Admin"}</p>
+        <h1 className="text-lg font-semibold">予約管理システム</h1>
+        <p className="text-xs text-gray-500">{currentUser?.fullName || "管理者"}</p>
       </div>
 
       <div className="flex items-center space-x-4">
-        {/* Notification */}
+        {/* 通知 */}
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="w-5 h-5" />
           <span className="absolute top-1 right-1 w-2 h-2 bg-red-600 rounded-full" />
         </Button>
 
-        {/* Theme Toggle (Optional) */}
+        {/* テーマ切替（任意） */}
         <Button variant="ghost" size="icon">
           <Sun className="w-5 h-5" />
         </Button>
 
-        {/* User Profile Dropdown */}
+        {/* ユーザーメニュー */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
               </div>
-              <span className="text-sm font-medium hidden md:block">{currentUser?.fullName || "Admin"}</span>
+              <span className="text-sm font-medium hidden md:block">{currentUser?.fullName || "管理者"}</span>
               <ChevronDown className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -54,18 +54,22 @@ export const AdminHeader = ({ onLogout, currentUser }: AdminHeaderProps) => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+
             <DropdownMenuItem>
               <User className="w-4 h-4 mr-2" />
-              Hồ Sơ
+              プロフィール
             </DropdownMenuItem>
+
             <DropdownMenuItem>
               <Settings className="w-4 h-4 mr-2" />
-              Cài Đặt
+              設定
             </DropdownMenuItem>
+
             <DropdownMenuSeparator />
+
             <DropdownMenuItem className="text-red-600" onClick={() => onLogout()}>
               <LogOut className="w-4 h-4 mr-2" />
-              Đăng Xuất
+              ログアウト
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

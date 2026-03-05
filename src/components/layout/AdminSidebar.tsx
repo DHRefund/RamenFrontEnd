@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, Calendar, Settings, LogOut, Utensils, Users } from "lucide-react";
+import { LayoutDashboard, Calendar, Settings, LogOut, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -19,10 +19,10 @@ interface AdminSidebarProps {
 }
 
 const menuItems = [
-  { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
-  { path: "/admin/bookings", icon: Calendar, label: "Quản Lý Đặt Bàn" },
-  { path: "/admin/customers", icon: Users, label: "Khách Hàng" },
-  { path: "/admin/settings", icon: Settings, label: "Cài Đặt" },
+  { path: "/admin", icon: LayoutDashboard, label: "ダッシュボード" },
+  { path: "/admin/bookings", icon: Calendar, label: "予約管理" },
+  { path: "/admin/customers", icon: Users, label: "顧客管理" },
+  { path: "/admin/settings", icon: Settings, label: "設定" },
 ];
 
 export const AdminSidebar = ({ onLogout, isOpen }: AdminSidebarProps) => {
@@ -41,12 +41,12 @@ export const AdminSidebar = ({ onLogout, isOpen }: AdminSidebarProps) => {
   return (
     <>
       <aside
-        className={`${isOpen ? "w-64" : "w-20"} border-r bg-white h-screen sticky top-0 transition-all duration-300 relative flex flex-col `}
+        className={`${isOpen ? "w-64" : "w-20"} border-r bg-white h-screen sticky top-0 transition-all duration-300 relative flex flex-col`}
       >
         <div className="p-6">
           <Link to="/admin" className="flex items-center space-x-2">
             <span className="text-2xl">🍜</span>
-            {isOpen && <span className="font-bold text-lg">Admin Panel</span>}
+            {isOpen && <span className="font-bold text-lg">管理パネル</span>}
           </Link>
         </div>
 
@@ -79,24 +79,24 @@ export const AdminSidebar = ({ onLogout, isOpen }: AdminSidebarProps) => {
             onClick={handleLogoutClick}
           >
             <LogOut className="w-5 h-5" />
-            {isOpen && <span className="ml-2">Đăng Xuất</span>}
+            {isOpen && <span className="ml-2">ログアウト</span>}
           </Button>
         </div>
       </aside>
 
-      {/* Logout Confirmation Dialog */}
+      {/* ログアウト確認ダイアログ */}
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Xác Nhận Đăng Xuất</AlertDialogTitle>
+            <AlertDialogTitle>ログアウトの確認</AlertDialogTitle>
             <AlertDialogDescription>
-              Bạn có chắc chắn muốn đăng xuất không? Bạn sẽ cần đăng nhập lại để truy cập quản trị.
+              ログアウトしてもよろしいですか？ 再度管理画面にアクセスするには、ログインが必要です。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Quay Lại</AlertDialogCancel>
+            <AlertDialogCancel>戻る</AlertDialogCancel>
             <AlertDialogAction onClick={confirmLogout} className="bg-red-600 hover:bg-red-700">
-              Đăng Xuất
+              ログアウト
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

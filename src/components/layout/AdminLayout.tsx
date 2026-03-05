@@ -15,7 +15,7 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
 
   const handleLogout = () => {
     authService.logout();
-    toast.success("👋 Đã đăng xuất thành công");
+    toast.success("👋 ログアウトしました");
     navigate("/admin/login");
   };
 

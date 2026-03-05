@@ -7,10 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const bookingFormSchema = z.object({
-  customerName: z.string().min(2, "Tên phải có ít nhất 2 ký tự"),
-  customerPhone: z.string().regex(/^0[0-9]{9}$/, "Số điện thoại không hợp lệ"),
-  customerEmail: z.string().email("Email không hợp lệ").optional().or(z.literal("")),
-  numberOfGuests: z.string().min(1, "Vui lòng chọn số người"),
+  customerName: z.string().min(2, "お名前は2文字以上で入力してください。"),
+  customerPhone: z.string().regex(/^0[0-9]{9}$/, "電話番号の形式が正しくありません。（例：09012345678）"),
+  customerEmail: z.string().email("メールアドレスの形式が正しくありません。").optional().or(z.literal("")),
+  numberOfGuests: z.string().min(1, "人数を選択してください。"),
 });
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
@@ -30,9 +30,9 @@ export const BookingForm = ({ onSubmit, isSubmitting = false }: BookingFormProps
   } = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
-      customerName: "POROCIA",
-      customerPhone: "0912345678",
-      customerEmail: "porocia@example.com",
+      customerName: "",
+      customerPhone: "",
+      customerEmail: "",
       numberOfGuests: "2",
     },
   });
@@ -42,36 +42,33 @@ export const BookingForm = ({ onSubmit, isSubmitting = false }: BookingFormProps
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">👤 Thông Tin Khách Hàng</h3>
+        <h3 className="text-lg font-semibold mb-4">お客様情報</h3>
 
         <div className="space-y-4">
-          {/* Họ tên */}
           <div>
-            <Label htmlFor="customerName">Họ và Tên *</Label>
+            <Label htmlFor="customerName">お名前 *</Label>
             <Input
               id="customerName"
-              placeholder="Nguyễn Văn A"
+              placeholder="山田 太郎"
               {...register("customerName")}
               className={errors.customerName ? "border-red-500" : ""}
             />
             {errors.customerName && <p className="text-sm text-red-500 mt-1">{errors.customerName.message}</p>}
           </div>
 
-          {/* Số điện thoại */}
           <div>
-            <Label htmlFor="customerPhone">Số Điện Thoại *</Label>
+            <Label htmlFor="customerPhone">電話番号 *</Label>
             <Input
               id="customerPhone"
-              placeholder="0909xxxxxx"
+              placeholder="09012345678"
               {...register("customerPhone")}
               className={errors.customerPhone ? "border-red-500" : ""}
             />
             {errors.customerPhone && <p className="text-sm text-red-500 mt-1">{errors.customerPhone.message}</p>}
           </div>
 
-          {/* Email (Optional) */}
           <div>
-            <Label htmlFor="customerEmail">Email (Tùy chọn)</Label>
+            <Label htmlFor="customerEmail">メールアドレス（任意）</Label>
             <Input
               id="customerEmail"
               type="email"
@@ -82,17 +79,16 @@ export const BookingForm = ({ onSubmit, isSubmitting = false }: BookingFormProps
             {errors.customerEmail && <p className="text-sm text-red-500 mt-1">{errors.customerEmail.message}</p>}
           </div>
 
-          {/* Số người */}
           <div>
-            <Label htmlFor="numberOfGuests">Số Người *</Label>
+            <Label htmlFor="numberOfGuests">人数 *</Label>
             <Select value={numberOfGuests} onValueChange={(value) => setValue("numberOfGuests", value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Chọn số người" />
+                <SelectValue placeholder="人数を選択してください" />
               </SelectTrigger>
               <SelectContent>
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                   <SelectItem key={num} value={num.toString()}>
-                    {num} {num === 1 ? "người" : "người"}
+                    {num}名
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -102,7 +98,7 @@ export const BookingForm = ({ onSubmit, isSubmitting = false }: BookingFormProps
       </div>
 
       <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={isSubmitting}>
-        {isSubmitting ? "Đang xử lý..." : "Xác Nhận Đặt Bàn"}
+        {isSubmitting ? "処理中..." : "予約を確定する"}
       </Button>
     </form>
   );

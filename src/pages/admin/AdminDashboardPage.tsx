@@ -3,14 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { bookingService } from "@/services/bookingService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Users, CheckCircle, XCircle, Clock, TrendingUp } from "lucide-react";
+import { Calendar, CheckCircle, XCircle, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
-import { vi } from "date-fns/locale";
+import { ja } from "date-fns/locale";
 
 export const AdminDashboardPage = () => {
-  // const [selectedDate, setSelectedDate] = useState(new Date());
+  // 日付フィルター（未選択の場合は全予約取得）
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
+  // 予約データ取得
   const { data: bookings, isLoading } = useQuery({
     queryKey: ["admin-bookings", selectedDate],
     queryFn: () =>
@@ -18,8 +19,10 @@ export const AdminDashboardPage = () => {
         ? bookingService.getAllReservationsByDate(format(selectedDate, "yyyy-MM-dd"))
         : bookingService.getAllReservations(),
   });
+
   console.log("Admin bookings fetched:", bookings, isLoading);
-  // Tính thống kê
+
+  // 統計データ計算
   const stats = {
     total: bookings?.length || 0,
     booked: bookings?.filter((b) => b.status === "BOOKED").length || 0,
@@ -29,25 +32,25 @@ export const AdminDashboardPage = () => {
 
   const statCards = [
     {
-      title: "Tổng Đặt",
+      title: "総予約数",
       value: stats.total,
       icon: Calendar,
       color: "bg-blue-500",
     },
     {
-      title: "Đã Xác Nhận",
+      title: "予約済み",
       value: stats.booked,
       icon: CheckCircle,
       color: "bg-green-500",
     },
     {
-      title: "Hoàn Thành",
+      title: "来店完了",
       value: stats.completed,
       icon: TrendingUp,
       color: "bg-purple-500",
     },
     {
-      title: "Đã Hủy",
+      title: "キャンセル",
       value: stats.cancelled,
       icon: XCircle,
       color: "bg-red-500",
@@ -56,12 +59,16 @@ export const AdminDashboardPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* ヘッダー */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-gray-500">{format(selectedDate, "EEEE, dd/MM/yyyy", { locale: vi })}</p>
+          <h1 className="text-2xl font-bold">ダッシュボード</h1>
+
+          <p className="text-gray-500">
+            {selectedDate ? format(selectedDate, "EEEE, yyyy/MM/dd", { locale: ja }) : "全期間の予約"}
+          </p>
         </div>
+
         <input
           type="date"
           value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
@@ -70,10 +77,11 @@ export const AdminDashboardPage = () => {
         />
       </div>
 
-      {/* Stats Cards */}
+      {/* 統計カード */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {statCards.map((stat) => {
           const Icon = stat.icon;
+
           return (
             <Card key={stat.title}>
               <CardContent className="p-6">
@@ -82,6 +90,7 @@ export const AdminDashboardPage = () => {
                     <p className="text-sm text-gray-500">{stat.title}</p>
                     <p className="text-3xl font-bold">{stat.value}</p>
                   </div>
+
                   <div className={`${stat.color} p-3 rounded-full`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
@@ -92,11 +101,12 @@ export const AdminDashboardPage = () => {
         })}
       </div>
 
-      {/* Recent Bookings */}
+      {/* 本日の予約 */}
       <Card>
         <CardHeader>
-          <CardTitle>📋 Đặt Chỗ Hôm Nay</CardTitle>
+          <CardTitle>📋 本日の予約</CardTitle>
         </CardHeader>
+
         <CardContent>
           {isLoading ? (
             <div className="text-center py-8">
@@ -107,21 +117,26 @@ export const AdminDashboardPage = () => {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left py-3 px-4">Giờ</th>
-                    <th className="text-left py-3 px-4">Khách</th>
-                    <th className="text-left py-3 px-4">Số Người</th>
-                    <th className="text-left py-3 px-4">SĐT</th>
-                    <th className="text-left py-3 px-4">Trạng Thái</th>
-                    <th className="text-left py-3 px-4">Hành Động</th>
+                    <th className="text-left py-3 px-4">時間</th>
+                    <th className="text-left py-3 px-4">顧客名</th>
+                    <th className="text-left py-3 px-4">人数</th>
+                    <th className="text-left py-3 px-4">電話番号</th>
+                    <th className="text-left py-3 px-4">ステータス</th>
+                    <th className="text-left py-3 px-4">操作</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {bookings.map((booking) => (
                     <tr key={booking.bookingId} className="border-b hover:bg-gray-50">
                       <td className="py-3 px-4">{booking.timeSlot || "N/A"}</td>
+
                       <td className="py-3 px-4">{booking.customerName || "N/A"}</td>
+
                       <td className="py-3 px-4">{booking.numberOfGuests || "N/A"}</td>
+
                       <td className="py-3 px-4">{booking.customerPhone || "N/A"}</td>
+
                       <td className="py-3 px-4">
                         <span
                           className={`px-2 py-1 rounded text-xs ${
@@ -135,6 +150,7 @@ export const AdminDashboardPage = () => {
                           {booking.status}
                         </span>
                       </td>
+
                       <td className="py-3 px-4">
                         <div className="flex gap-2">
                           {booking.status === "BOOKED" && (
@@ -142,6 +158,7 @@ export const AdminDashboardPage = () => {
                               <Button size="sm" variant="outline" className="text-green-600">
                                 ✓
                               </Button>
+
                               <Button size="sm" variant="outline" className="text-red-600">
                                 ✕
                               </Button>
@@ -155,7 +172,7 @@ export const AdminDashboardPage = () => {
               </table>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">Không có đặt chỗ nào hôm nay</div>
+            <div className="text-center py-8 text-gray-500">本日の予約はありません</div>
           )}
         </CardContent>
       </Card>

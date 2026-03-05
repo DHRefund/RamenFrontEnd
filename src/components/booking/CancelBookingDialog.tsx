@@ -48,83 +48,89 @@ export const CancelBookingDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-red-50 border-red-200 shadow-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center text-red-600">
             <AlertCircle className="w-5 h-5 mr-2" />
-            Xác Nhận Hủy Đặt Bàn
+            ご予約キャンセルの確認
           </DialogTitle>
-          <DialogDescription>Vui lòng xác nhận thông tin trước khi hủy</DialogDescription>
+
+          <DialogDescription className="text-gray-600">キャンセル前に内容をご確認ください。</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Thông tin booking */}
-          <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+          {/* 予約情報 */}
+          <div className="bg-white border rounded-lg p-4 space-y-2 shadow-sm">
             <div className="flex items-center text-sm">
               <Calendar className="w-4 h-4 mr-2 text-gray-500" />
-              <span>Mã đặt: #{bookingId.slice(-8).toUpperCase()}</span>
+              <span>予約番号: #{bookingId.slice(-8).toUpperCase()}</span>
             </div>
+
             <div className="flex items-center text-sm">
               <Calendar className="w-4 h-4 mr-2 text-gray-500" />
-              <span>Ngày: {bookingDate}</span>
+              <span>日付: {bookingDate}</span>
             </div>
+
             <div className="flex items-center text-sm">
               <Clock className="w-4 h-4 mr-2 text-gray-500" />
-              <span>Giờ: {timeSlot}</span>
+              <span>時間: {timeSlot}</span>
             </div>
           </div>
 
-          {/* Cảnh báo */}
+          {/* 注意 */}
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              ⚠️ Chỉ có thể hủy trước giờ đặt ít nhất <strong>2 giờ</strong>. Sau khi hủy, bàn sẽ được giải phóng cho
-              khách khác.
+              ⚠️ ご予約時間の<strong>2時間前まで</strong>キャンセル可能です。
+              キャンセル後はお席が他のお客様へ開放されます。
             </AlertDescription>
           </Alert>
 
-          {/* Lý do hủy (optional) */}
+          {/* キャンセル理由 */}
           <div className="space-y-2">
-            <Label htmlFor="cancelReason">Lý Do Hủy (Tùy chọn)</Label>
+            <Label htmlFor="cancelReason">キャンセル理由（任意）</Label>
+
             <Textarea
               id="cancelReason"
-              placeholder="Vui lòng cho chúng tôi biết lý do hủy..."
+              placeholder="キャンセル理由をご記入ください..."
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
               rows={3}
-              className="resize-none"
+              className="resize-none bg-white"
             />
           </div>
 
-          {/* Xác thực số điện thoại */}
+          {/* 電話番号確認 */}
           <div className="space-y-2">
-            <Label htmlFor="confirmPhone">Xác Nhận Số Điện Thoại *</Label>
+            <Label htmlFor="confirmPhone">電話番号確認 *</Label>
+
             <input
               id="confirmPhone"
               type="tel"
-              placeholder="Nhập lại số điện thoại của bạn"
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+              className="flex h-10 w-full rounded-md border border-input bg-white px-3 py-2 text-sm"
               defaultValue={customerPhone}
               readOnly
             />
-            <p className="text-xs text-gray-500">Số điện thoại này sẽ được dùng để xác thực chủ đặt chỗ</p>
+
+            <p className="text-xs text-gray-500">ご予約者様確認のための電話番号です。</p>
           </div>
         </div>
 
         <DialogFooter className="gap-2">
           <Button variant="outline" onClick={handleClose}>
-            Quay Lại
+            戻る
           </Button>
+
           <Button variant="destructive" onClick={handleConfirm} disabled={isPending}>
             {isPending ? (
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                Đang Xử Lý...
+                処理中...
               </>
             ) : (
               <>
                 <AlertCircle className="w-4 h-4 mr-2" />
-                Xác Nhận Hủy
+                キャンセルする
               </>
             )}
           </Button>

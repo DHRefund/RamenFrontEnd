@@ -1,6 +1,6 @@
 import { Calendar } from "@/components/ui/calendar";
 import { addDays, format, isBefore, startOfDay } from "date-fns";
-import { vi } from "date-fns/locale";
+import { ja } from "date-fns/locale";
 
 interface BookingCalendarProps {
   selectedDate: Date | undefined;
@@ -13,13 +13,13 @@ export const BookingCalendar = ({
   selectedDate,
   onSelectDate,
   minDate = startOfDay(new Date()),
-  maxDate = addDays(startOfDay(new Date()), 30), // Tối đa 30 ngày tới
+  maxDate = addDays(startOfDay(new Date()), 30),
 }: BookingCalendarProps) => {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-semibold mb-2">📅 Chọn Ngày</h3>
-        <p className="text-sm text-gray-500">Bạn có thể đặt bàn trước tối đa 30 ngày</p>
+        <h3 className="text-lg font-semibold mb-2">📅 日付を選択</h3>
+        <p className="text-sm text-gray-500">ご予約は最大30日先まで可能です。</p>
       </div>
 
       <div className="flex justify-center">
@@ -31,7 +31,7 @@ export const BookingCalendar = ({
             const today = startOfDay(new Date());
             return isBefore(date, today) || isBefore(maxDate, date);
           }}
-          locale={vi}
+          locale={ja}
           className="rounded-md border shadow"
         />
       </div>
@@ -39,7 +39,10 @@ export const BookingCalendar = ({
       {selectedDate && (
         <div className="text-center p-4 bg-red-50 rounded-lg">
           <p className="text-red-600 font-medium">
-            Đã chọn: {format(selectedDate, "EEEE, dd/MM/yyyy", { locale: vi })}
+            選択日:{" "}
+            {format(selectedDate, "yyyy年MM月dd日 (EEEE)", {
+              locale: ja,
+            })}
           </p>
         </div>
       )}

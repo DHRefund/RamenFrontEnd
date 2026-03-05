@@ -3,12 +3,16 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "sonner";
 
-// Layouts
+// Layout
 import { CustomerLayout } from "./components/layout/CustomerLayout";
 import { AdminLayout } from "./components/layout/AdminLayout";
+
+// Customer Pages
 import { BookingPage } from "./pages/customer/BookingPage";
 import { ConfirmationPage } from "./pages/customer/ConfirmationPage";
 import { CheckBookingPage } from "./pages/customer/CheckingBookingPage";
+
+// Admin Pages
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 
@@ -16,43 +20,44 @@ import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 import { AdminGuard } from "./components/admin/AdminGuard";
 import { AdminRoute } from "./components/admin/AdminRoute";
 
+// 今後実装予定のページ
 // import { AdminBookingsPage } from "./pages/admin/AdminBookingsPage";
 // import { AdminSettingsPage } from "./pages/admin/AdminSettingsPage";
 
-// Pages (Placeholder - sẽ xây dựng ở phần sau)
-const CustomerHome = () => <div className="p-8">Trang Đặt Bàn - Customer</div>;
-const CheckBooking = () => <div className="p-8">Kiểm Tra Đơn Hàng</div>;
-// const Confirmation = () => <div className="p-8">Xác Nhận Đặt Bàn</div>;
+// 仮のページ（開発用プレースホルダー）
+const CustomerHome = () => <div className="p-8">予約ページ（Customer）</div>;
+const CheckBooking = () => <div className="p-8">予約確認ページ</div>;
 
-const AdminLogin = () => <div className="p-8">Admin Login</div>;
-const AdminDashboard = () => <div className="p-8">Admin Dashboard</div>;
-const AdminBookings = () => <div className="p-8">Quản Lý Đặt Bàn</div>;
-const AdminSettings = () => <div className="p-8">Cài Đặt</div>;
+const AdminLogin = () => <div className="p-8">管理者ログイン</div>;
+const AdminDashboard = () => <div className="p-8">管理ダッシュボード</div>;
+const AdminBookings = () => <div className="p-8">予約管理</div>;
+const AdminSettings = () => <div className="p-8">設定</div>;
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          {/* Customer Routes */}
+          {/* ================= Customer Routes ================= */}
+
           <Route
             path="/"
             element={
               <CustomerLayout>
-                <div className="p-8">Trang Chủ - Customer</div>
-                {/* <BookingPage /> */}
+                <div className="p-8">ホームページ</div>
               </CustomerLayout>
             }
           />
+
           <Route
             path="/booking"
             element={
               <CustomerLayout>
-                {/* <div className="p-8">Trang Chủ - Customer</div> */}
                 <BookingPage />
               </CustomerLayout>
             }
           />
+
           <Route
             path="/check-booking"
             element={
@@ -61,6 +66,7 @@ function App() {
               </CustomerLayout>
             }
           />
+
           <Route
             path="/confirmation/:bookingId"
             element={
@@ -69,7 +75,20 @@ function App() {
               </CustomerLayout>
             }
           />
-          {/* Admin Routes */}
+
+          {/* ================= Admin Routes ================= */}
+
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+
+          <Route
+            path="/admin"
+            element={
+              <AdminLayout>
+                <AdminDashboardPage />
+              </AdminLayout>
+            }
+          />
+
           <Route
             path="/admin/bookings"
             element={
@@ -78,6 +97,7 @@ function App() {
               </AdminLayout>
             }
           />
+
           <Route
             path="/admin/settings"
             element={
@@ -86,18 +106,14 @@ function App() {
               </AdminLayout>
             }
           />
-          <Route path="/admin/login" element={<AdminLoginPage />} />
-          <Route
-            path="/admin"
-            element={
-              <AdminLayout>
-                {" "}
-                <AdminDashboardPage />{" "}
-              </AdminLayout>
-            }
-          />
-          {/* Redirect unknown routes */} <Route path="*" element={<Navigate to="/" replace />} />
+
+          {/* ================= Fallback ================= */}
+
+          {/* 不明なURLはホームへリダイレクト */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+
+        {/* Toast通知 */}
         <Toaster richColors position="top-right" />
       </BrowserRouter>
     </QueryClientProvider>
