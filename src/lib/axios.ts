@@ -2,7 +2,7 @@
 import axios from "axios";
 
 export const apiClient = axios.create({
-  baseURL: "/api", // Dùng proxy đã cấu hình trong vite.config.ts
+  baseURL: "http://localhost:8080/api", // Dùng proxy đã cấu hình trong vite.config.ts
   headers: {
     "Content-Type": "application/json",
   },
